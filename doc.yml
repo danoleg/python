@@ -1,0 +1,94 @@
+asyncapi: 3.0.0
+info:
+  title: WebSocket API for Errors TEST
+  version: 1.0.0
+channels:
+  /ws/violations/pre-check:
+    address: /ws/error
+    messages:
+      publish.message:
+        name: errorsPreCheckDataResponse
+        payload:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                description: Individual violation item
+              description: List of violation items
+            page:
+              type: integer
+              description: Page number
+              example: 1
+            size:
+              type: integer
+              description: Number of items per page
+              example: 50
+            total:
+              type: integer
+              description: Total number of items
+              example: 100
+      subscribe.message:
+        name: getViolationsPreCheckData
+        payload:
+          type: object
+          properties:
+            auth_token:
+              type: string
+              description: Authentication token (required)
+              example: your_auth_token
+            data:
+              type: object
+              properties:
+                company_ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: >-
+                    List of user IDs (not required, by default all available
+                    companies)
+                  example:
+                    - 12
+                    - 13
+                types:
+                  type: array
+                  items:
+                    type: integer
+                  description: >-
+                    List of violation types (not required, by default all
+                    available values 101, 102, 103, 104)
+                  example:
+                    - 101
+                    - 102
+              description: Additional data
+              example:
+                company_ids:
+                  - 12
+                  - 13
+                types:
+                  - 101
+                  - 102
+            page:
+              type: integer
+              description: Page number
+              example: 1
+            size:
+              type: integer
+              description: Number of items per page
+              example: 50
+operations:
+  /ws/violations/pre-check.publish:
+    action: receive
+    channel:
+      $ref: '#/channels/~1ws~1violations~1pre-check'
+    summary: Errors Data Response
+    messages:
+      - $ref: '#/channels/~1ws~1violations~1pre-check/messages/publish.message'
+  /ws/violations/pre-check.subscribe:
+    action: send
+    channel:
+      $ref: '#/channels/~1ws~1violations~1pre-check'
+    summary: Get Violations Pre-check Data
+    messages:
+      - $ref: '#/channels/~1ws~1violations~1pre-check/messages/subscribe.message'
